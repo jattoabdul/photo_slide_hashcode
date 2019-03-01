@@ -54,19 +54,6 @@ class HashCode:
 			file_content += '\n'
 		return file_content
 
-		# for single_sub_v_array in sub_v_arrays:
-		# 	s_sub_v_array = []
-		# 	for key, value in single_sub_v_array[0].items():
-		# 		s_sub_v_array.append(key)
-		# 	for key, value in single_sub_v_array[1].items():
-		# 		s_sub_v_array.append(key)
-		#
-		# 	res_v_slide = "{} {}".format(s_sub_v_array[0] - 1, s_sub_v_array[1] - 1)
-		# 	file_content += res_v_slide
-		# 	file_content += '\n'
-		#
-		# return file_content
-
 
 if __name__ == '__main__':
 	args = sys.argv

@@ -36,8 +36,7 @@ class HashCode:
 
 		del v_arrays[usable_v_arrays:]
 
-		file_content = ''
-		file_content += str(total_num_of_slide)
+		file_content = str(total_num_of_slide)
 		file_content += '\n'
 		for h_array in h_arrays:
 			for key, value in h_array.items():
@@ -49,8 +48,7 @@ class HashCode:
 			for single_s_v_obj in single_sub_v_array:
 				s_sub_v_array.append(int(list(single_s_v_obj.keys())[0]))
 
-			res_v_slide = "{} {}".format(s_sub_v_array[0] - 1, s_sub_v_array[1] - 1)
-			file_content += res_v_slide
+			file_content += "{} {}".format(s_sub_v_array[0] - 1, s_sub_v_array[1] - 1)
 			file_content += '\n'
 		return file_content
 

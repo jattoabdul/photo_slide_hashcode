@@ -23,7 +23,6 @@ class HashCode:
 		v_arrays = []
 		total_num_of_slide = 0
 
-		print(len(slide_array), 'len of slide array')
 		for idx, val in enumerate(slide_array, start=1):
 			if val[idx][0] == 'H':
 				h_arrays.append(val)
@@ -37,27 +36,20 @@ class HashCode:
 
 		del v_arrays[usable_v_arrays:]
 
-		# add total_num_of_slide to file content with newline
-		file_content = ''
-		file_content += str(total_num_of_slide)
+		file_content = str(total_num_of_slide)
 		file_content += '\n'
-		# list out index of h_arrays on each line
 		for h_array in h_arrays:
 			for key, value in h_array.items():
 				file_content += str(key - 1)
 				file_content += '\n'
-		# list out index v_arrays on each line but in twos
 		sub_v_arrays = [v_arrays[n:n + 2] for n in range(0, len(v_arrays), 2)]
 		for single_sub_v_array in sub_v_arrays:
 			s_sub_v_array = []
-			for key, value in single_sub_v_array[0].items():
-				s_sub_v_array.append(key)
-			for key, value in single_sub_v_array[1].items():
-				s_sub_v_array.append(key)
-			res_v_slide = "{} {}".format(s_sub_v_array[0] - 1, s_sub_v_array[1] - 1)
-			file_content += res_v_slide
-			file_content += '\n'
+			for single_s_v_obj in single_sub_v_array:
+				s_sub_v_array.append(int(list(single_s_v_obj.keys())[0]))
 
+			file_content += "{} {}".format(s_sub_v_array[0] - 1, s_sub_v_array[1] - 1)
+			file_content += '\n'
 		return file_content
 
 

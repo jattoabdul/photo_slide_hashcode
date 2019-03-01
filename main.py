@@ -1,67 +1,73 @@
-import sys, os
+import sys
+
+args = sys.argv
+input_file = open(args[1], 'r')
+output_file = open(args[2], 'w')
+
+lines = int(input_file.readline())
+
+horizontal_slides = {}
+vertical_slides = {}
+verticals = {}
+transitions_slides = {}
+transitions = {}
+tags = []
+
+for i in range(lines):
+    photo_data = input_file.readline().rstrip()
+    photo_data_list = photo_data.split(' ')
+
+    # separate horizontals
+    if photo_data_list[0] == 'H':
+        for j in range(int(photo_data_list[1])):
+            tags.append(photo_data_list[j + 2])
+        horizontal_slides.update({(i,): tags})
+
+    # separate verticals
+    if photo_data_list[0] == 'V':
+        for j in range(int(photo_data_list[1])):
+            tags.append(photo_data_list[j + 2])
+        verticals[i] = tags
+    tags = []
 
 
-class HashCode:
-	def write_file(self, file_path, file_content):
-		with open(file_path, 'w', encoding='utf-8') as file_handle:
-			file_handle.write(file_content)
+# create slides out of verticals
+v_len = len(verticals)
 
-	def read_file(self, file_path):
-		with open(file_path, 'rb') as file_data:
-			return file_data.read()
+if v_len == 2:
+    v_ids = tuple(list(verticals.keys()))
+    v_tags = list(set(verticals[1] + verticals[2]))
+    vertical_slides.update({v_ids: v_tags})
+elif v_len > 2:
+    verticals1 = list(verticals.items())[:v_len//2]
+    verticals2 = list(verticals.items())[v_len//2:]
+    for i, j in zip(verticals1, verticals2):
+        v_ids = (i[0], j[0])
+        v_tags = list(set(i[1] + j[1]))
+        vertical_slides.update({v_ids: v_tags})
 
-	def create_slide(self, raw_data):
-		whole_data = raw_data.decode().split("\n")
-		whole_data.pop(0)
-		whole_data.pop(-1)
-		slide_array = []
-		for idx, val in enumerate(whole_data, start=1):
-			obj = {idx: val}
-			slide_array.append(obj)
+horizontal_transitions = sorted(horizontal_slides.items(), key=lambda kv: kv[1])
+vertical_transitions = sorted(vertical_slides.items(), key=lambda kv: kv[1])
 
-		h_arrays = []
-		v_arrays = []
-		total_num_of_slide = 0
+len_hor = len(horizontal_slides)
+len_ver = len(vertical_slides)
+if len_hor > 0 and len_ver > 0:
+    transitions_slides = {**horizontal_slides, **vertical_slides}
+elif len_hor == 0:
+    transitions_slides = {**vertical_slides}
+else:
+    transitions_slides = {**horizontal_slides}
+transitions = sorted(transitions_slides.items(), key=lambda kv: kv[1])
 
-		for idx, val in enumerate(slide_array, start=1):
-			if val[idx][0] == 'H':
-				h_arrays.append(val)
-			else:
-				v_arrays.append(val)
+# data for output
+S = len(transitions) # no. of slides
+output_file.write("{}\n".format(S))
 
-		total_num_of_slide += len(h_arrays)
-		v_array_modulus = len(v_arrays) % 2
-		usable_v_arrays = len(v_arrays) - v_array_modulus
-		total_num_of_slide += int(usable_v_arrays/2)
+for i in transitions:
+    if len(i[0]) == 2:
+        output_file.write("{} {}\n".format(i[0][0], i[0][1]))
+    else:
+        output_file.write("{}\n".format(i[0][0]))
 
-		del v_arrays[usable_v_arrays:]
-
-		file_content = str(total_num_of_slide)
-		file_content += '\n'
-		for h_array in h_arrays:
-			for key, value in h_array.items():
-				file_content += str(key - 1)
-				file_content += '\n'
-		sub_v_arrays = [v_arrays[n:n + 2] for n in range(0, len(v_arrays), 2)]
-		for single_sub_v_array in sub_v_arrays:
-			s_sub_v_array = []
-			for single_s_v_obj in single_sub_v_array:
-				s_sub_v_array.append(int(list(single_s_v_obj.keys())[0]))
-
-			file_content += "{} {}".format(s_sub_v_array[0] - 1, s_sub_v_array[1] - 1)
-			file_content += '\n'
-		return file_content
-
-
-if __name__ == '__main__':
-	args = sys.argv
-	file_name = args[1]
-	if file_name:
-		test_file_path = "./{}".format(os.path.join(file_name))
-		slide_show_maker = HashCode()
-		raw_data = slide_show_maker.read_file(test_file_path)
-		file_content = slide_show_maker.create_slide(raw_data)
-		result_file_path = "./result_{}".format(file_name)
-		slide_show_maker.write_file(result_file_path, file_content)
-	else:
-		print('No file name')
+output_file.close()
+input_file.close()
